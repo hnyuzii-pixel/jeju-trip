@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>제주도 2박 3일 여행</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF7F1; --card:#FFFFFF; --ink:#24211E; --muted:#7A7068; --line:#EAE2D7;
+  --d1:#E8772E; --d2:#1F7A8C; --d3:#7A5BA8;
+  --sea:#DCEFF2; --land:#F1E9DC; --landline:#CDBFA9;
+  --resv:#2F6FD6; --wait:#E8772E; --off:#D64545; --warn:#B98900; --ok:#2E9E5B;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto;padding:18px 14px 60px}
+header h1{font-size:22px;font-weight:900;margin:4px 0 2px;letter-spacing:-.5px}
+header .sub{color:var(--muted);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.chip{font-size:12px;padding:3px 9px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding:10px 0 8px;margin:6px 0 10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer;font-family:inherit}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tab.d1[aria-selected="true"]{background:var(--d1);border-color:var(--d1)}
+.tab.d2[aria-selected="true"]{background:var(--d2);border-color:var(--d2)}
+.tab.d3[aria-selected="true"]{background:var(--d3);border-color:var(--d3)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.mapcard{padding:8px 8px 10px}
+svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12.5px;padding:4px 6px 0}
+.legend span b{display:inline-block;width:18px;height:18px;border-radius:50%;color:#fff;font-size:11px;text-align:center;line-height:18px;margin-right:4px}
+.maphint{font-size:11.5px;color:var(--muted);padding:4px 6px 0}
+h2{font-size:18px;margin:4px 0 10px;letter-spacing:-.3px}
+h3{font-size:15px;margin:14px 0 6px}
+.daytitle{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.daytitle .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.daytitle small{color:var(--muted);font-weight:500;font-size:13px}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:52px 1fr;gap:10px;padding:10px 0;border-top:1px dashed var(--line)}
+.tl li:first-child{border-top:none}
+.tl .t{font-weight:900;font-size:14px;font-variant-numeric:tabular-nums}
+.tl .n{display:inline-block;min-width:20px;height:20px;border-radius:50%;color:#fff;font-size:11.5px;text-align:center;line-height:20px;margin-right:5px;font-weight:700;vertical-align:1px}
+.tl .p{font-weight:700}
+.tl .addr{color:var(--muted);font-size:12.5px}
+.tl .d{font-size:13.5px;margin-top:2px}
+.tl .move{font-size:12.5px;color:var(--muted);margin-top:3px}
+.tl li.drive{grid-template-columns:52px 1fr;padding:6px 0}
+.tl li.drive .d{color:var(--muted);font-size:12.5px;margin:0}
+.b{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:6px;margin:3px 4px 0 0;border:1px solid}
+.b.resv{color:var(--resv);border-color:#BFD3F5;background:#EEF4FE}
+.b.wait{color:#B85A16;border-color:#F4CDB0;background:#FDF1E8}
+.b.off{color:var(--off);border-color:#F2C2C2;background:#FDEEEE}
+.b.warn{color:#8A6600;border-color:#EBD58E;background:#FFF8DD}
+.b.ok{color:var(--ok);border-color:#BFE3CD;background:#ECF8F0}
+.note{font-size:13px;background:#FFF8DD;border:1px solid #EBD58E;border-radius:12px;padding:10px 12px;margin-top:10px}
+.note.blue{background:#EEF4FE;border-color:#BFD3F5}
+.note.red{background:#FDEEEE;border-color:#F2C2C2}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:700}
+.sum li{margin:4px 0}
+.sum b{display:inline-block;min-width:44px}
+ul.clean{padding-left:18px;margin:6px 0}
+ul.clean li{margin:4px 0}
+.q{counter-reset:q;list-style:none;padding:0;margin:0}
+.q li{counter-increment:q;padding:10px 0 10px 34px;position:relative;border-top:1px dashed var(--line)}
+.q li:first-child{border-top:none}
+.q li::before{content:counter(q);position:absolute;left:0;top:10px;width:24px;height:24px;border-radius:50%;background:var(--warn);color:#fff;font-weight:700;font-size:12.5px;text-align:center;line-height:24px}
+.src a{color:var(--d2);word-break:break-all}
+.src li{font-size:12.5px;margin:3px 0}
+.panel{display:none}
+.panel.on{display:block}
+.nmap{display:inline-block;margin-left:6px;font-size:10.5px;font-weight:700;color:#03A94D;border:1px solid #BFE6CF;background:#F1FAF5;border-radius:6px;padding:0 6px;line-height:17px;vertical-align:2px;text-decoration:none}
+.nmap::before{content:"N ";font-weight:900}
+details.more{margin-top:4px}
+details.more>summary{list-style:none;cursor:pointer;font-size:12px;color:var(--muted);display:inline-block;padding:1px 0}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::after{content:" ▾";font-size:10px}
+details.more[open]>summary::after{content:" ▴"}
+details.cardnote{margin-top:10px;background:#EEF4FE;border:1px solid #BFD3F5;border-radius:12px;padding:8px 12px}
+details.cardnote>summary{color:var(--ink);font-weight:700;font-size:13px;display:block}
+details.cardnote .note.blue{background:transparent;border:none;padding:0}
+.mapbox{position:relative;height:260px;border-radius:12px;overflow:hidden;background:#CFE8EE}
+#map{width:100%;height:100%;touch-action:none;display:block;user-select:none;-webkit-user-select:none}
+.mapctl{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:6px}
+.mapctl button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:18px;font-weight:700;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);font-family:inherit;padding:0;cursor:pointer}
+.mpop{display:none;position:absolute;left:8px;right:52px;bottom:8px;background:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 4px 14px rgba(0,0,0,.18);font-size:13.5px}
+.mp-h{display:flex;align-items:center;gap:6px}.mp-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.mp-x{margin-left:auto;border:none;background:none;font-size:22px;line-height:1;color:var(--muted);cursor:pointer;padding:0 2px}
+.mp-t{color:var(--muted);font-size:12.5px;margin:2px 0 8px 16px}
+.mp-btn{display:block;text-align:center;background:#03C75A;color:#fff;font-weight:700;border-radius:9px;padding:8px;text-decoration:none;font-size:13px}
+.b.insta{color:#fff;border-color:transparent;background:linear-gradient(45deg,#F58529,#DD2A7B 55%,#8134AF);padding:1px 6px;font-size:11.5px}
+.slink{display:inline-block;margin:2px 4px 2px 0;font-size:10.5px;font-weight:700;color:var(--resv);border:1px solid #BFD3F5;background:#EEF4FE;border-radius:6px;padding:0 6px;line-height:17px;text-decoration:none;white-space:nowrap}
+table.rsv td.lk .nmap{margin:2px 4px 2px 0}
+table.rsv tr.must td{background:#FDEEEE}
+table.rsv tr.must td:first-child{box-shadow:inset 3px 0 0 var(--off)}
+.mustb{display:block;width:max-content;margin-top:3px;font-size:10.5px;font-weight:700;color:#fff;background:var(--off);border-radius:5px;padding:0 5px;line-height:16px}
+footer{color:var(--muted);font-size:12px;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>🍊 제주도 2박 3일 여행</h1>
+  <div class="sub">2026.11.18(수) – 11.20(금) · 광주↔제주 · SK렌터카 · 숙소: 비스비제주 앤 팜빌리지</div>
+  <div class="chips">
+    <span class="chip">✈️ 가는편 11/18 12:10→13:05</span>
+    <span class="chip">✈️ 오는편 11/20 18:25→19:25</span>
+    <span class="chip">🏠 15:00 입실 / 11:00 퇴실</span>
+    <span class="chip">🥩 숙성도 중문 11/18 19:30 ✅</span>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist" id="tabs">
+  <button class="tab" role="tab" data-p="all" aria-selected="true">한눈에</button>
+  <button class="tab d1" role="tab" data-p="d1">1일차</button>
+  <button class="tab d2" role="tab" data-p="d2">2일차</button>
+  <button class="tab d3" role="tab" data-p="d3">3일차</button>
+  <button class="tab" role="tab" data-p="chk">예약·휴무</button>
+  <button class="tab" role="tab" data-p="mart">마트·회</button>
+  <button class="tab" role="tab" data-p="alt">바꾼 곳·트렌드</button>
+  <button class="tab" role="tab" data-p="q">⚠️ 확인할 것</button>
+</nav>
+
+<div class="card mapcard">
+  <div id="mapbox" class="mapbox"><svg id="map" viewBox="0 0 735 420" role="img" aria-label="제주 동선 지도"></svg>
+    <div class="mapctl"><button id="zin" aria-label="확대">+</button><button id="zout" aria-label="축소">−</button><button id="zfit" aria-label="전체 보기">⤢</button></div>
+    <div id="mpop" class="mpop"></div></div>
+  <div class="legend" id="legend"></div>
+  <div class="maphint">손가락으로 끌어서 움직이고, 두 손가락(또는 +/−)으로 확대해요. 확대할수록 가게 이름이 더 많이 보여요. 핀이나 아래 이름을 누르면 네이버 지도로 열 수 있어요. 위치는 대략이에요.</div>
+</div>
+
+<!-- 한눈에 -->
+<section class="panel on" id="p-all">
+  <div class="card">
+    <h2>전체 일정 요약</h2>
+    <ul class="clean sum">
+      <li><b style="color:var(--d1)">1일차</b> <b style="min-width:0">남춘식당</b> 고기국수·김밥 → 📸함덕 바다(맑으면) → <b style="min-width:0">보롬왓 크리스마스 팝업</b> → 숙소 → 🍹하라케케 노을 칵테일 → 숙성도 중문</li>
+      <li><b style="color:var(--d2)">2일차</b> 수희식당 전복뚝배기 → 📸쇠소깍 투명카약 → 📸휴애리(동백·유채·귤) → 📸큰엉 바다 절벽 → 올레시장 늦은 점심 → 📸새연교 노을·야경 → 천지연 야경 → 하나로 회 → 숙소 회 파티</li>
+      <li><b style="color:var(--d3)">3일차</b> 둘레길 제주식 양식 → 📸귤꽃다락 귤밭 카페 → 🛍샵제주 기념품 → 📸도두 → 렌터카 반납 → 🎁마음샌드</li>
+    </ul>
+    <div class="maphint" style="padding:6px 0 0"><span class="b insta" style="margin:0 4px 0 0">📸</span> = 사진 꼭 찍어야 할 곳</div>
+    <details class="more cardnote"><summary>💡 동선 원칙</summary><div class="note blue" style="margin-top:6px">첫날은 제주시에서 고기국수를 먹고 동쪽 보롬왓을 거쳐 서귀포로 내려가요. 2일차는 서귀포 동쪽(쇠소깍·남원)과 시내만 다녀서 운전이 짧아요. <b>동백 카페·야경</b> 위주로 채웠어요. 📸 표시가 포토스팟이에요. <b>카페는 항상 밥 먹은 다음</b>, 디저트는 하루 한 번 이하로 줄였어요. 식당은 어디서나 먹는 메뉴 대신 <b>제주에서만 먹는 메뉴 + 예쁘고 인기 있는 곳</b>으로 골랐어요.</div></details>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">🌤 11월 중순 제주 날씨·옷차림</h3>
+    <ul class="clean">
+      <li><b>11/12 기준 예보</b>: 18일 비가 지나간 뒤 찬 공기가 내려와서, 19일은 낮 최고 9°C 안팎까지 떨어질 수 있어요. 평년(낮 17°C)보다 훨씬 추워요. 예보는 바뀔 수 있으니 전날 다시 확인하세요.</li><li>바람이 세면 카약과 새연교가 꽤 추워요. 사진 찍을 때만 겉옷을 벗으세요.</li>
+      <li>니트에 <b>경량패딩은 필수</b>, 목장·바닷가용 <b>목도리나 장갑</b>, 첫날용 <b>우산</b>, 밤 산책용 편한 <b>운동화</b>를 챙기세요.</li>
+      <li>일몰은 17시 25분쯤이에요. 1일차 보롬왓 조명, 2일차 새연교 노을 끝물 시간을 여기에 맞췄어요.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 1일차 -->
+<section class="panel" id="p-d1">
+  <div class="card">
+    <h2 class="daytitle"><span class="dot" style="background:var(--d1)"></span>1일차 · 11/18(수) <small>고기국수 → 함덕 바다 → 보롬왓 → 하라케케 → 숙성도</small></h2>
+    <ul class="tl">
+      <li><div class="t">13:05</div><div><div class="p">✈️ 제주공항 도착</div><details class="more"><summary>자세히</summary><div class="d">5번 게이트 앞 횡단보도 → 렌터카하우스 통과 → <b>1구역 2승차장 SK렌터카 셔틀</b> (배차 약 6분)</div></details></div></li>
+      <li><div class="t">13:25</div><div><div class="p">🚗 SK렌터카 제주지점 차량 인수<a class="nmap" href="https://map.naver.com/p/search/SK%EB%A0%8C%ED%84%B0%EC%B9%B4%20%EC%A0%9C%EC%A3%BC%EC%A7%80%EC%A0%90" target="_blank" rel="noopener">지도</a></div><div class="d">차 외관 사진·영상 찍어두기. 전기차라면 반납 충전 기준 꼭 물어보기.</div><div class="move">소요 약 20–30분</div></div></li>
+      <li class="drive"><div></div><div class="d">🚗 약 20분 · 가게 앞 주차 불가 → 근처 공영주차장</div></li>
+      <li><div class="t">13:50</div><div><div class="p"><span class="n" style="background:var(--d1)">1</span>남춘식당 (고기국수·김밥)<a class="nmap" href="https://map.naver.com/p/search/%EB%82%A8%EC%B6%98%EC%8B%9D%EB%8B%B9%20%EC%A0%9C%EC%A3%BC" target="_blank" rel="noopener">지도</a></div><div class="addr">제주시 청귤로 12 (이도동, 구제주)</div><div><span class="b ok">11:00–16:30 · LO 16:00</span><span class="b off">일요일 휴무 → 수요일 OK</span><span class="b wait">현장 대기 등록</span><span class="b warn">주차 불가 · 골목 좁음</span></div><details class="more"><summary>자세히</summary><div class="d">도민들이 줄 서는 국수·김밥집이에요. <b>고기국수 + 유부김밥</b>이 정석이고, 도민들은 <b>수제비</b>도 많이 먹어요. 쌀쌀한 날이라 뜨끈한 국물로 시작해요. 입구 기계로 대기 등록하는 방식인데, 점심 피크(12시 전후)가 지난 시간이라 대기가 짧을 거예요. 보롬왓 가는 번영로 방향이라 동선도 좋아요.</div><div class="note" style="margin-top:6px">🔁 대기가 너무 길면 차로 10분 거리 <b>북교해바라기</b>(순두부, 중앙로 46-8, 10–19시)로 가요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 14:40 출발, 약 20분 (동쪽 해안 방향)</div></li>
+      <li><div class="t">15:00</div><div><div class="p"><span class="n" style="background:var(--d1)">2</span>함덕해수욕장 (날씨 맑으면)<a class="nmap" href="https://map.naver.com/p/search/%ED%95%A8%EB%8D%95%ED%95%B4%EC%88%98%EC%9A%95%EC%9E%A5" target="_blank" rel="noopener">지도</a></div><div class="addr">제주시 조천읍 함덕리 · 서우봉 해변</div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span><span class="b ok">무료 · 공영주차장</span><span class="b warn">흐리면 건너뛰기</span></div><details class="more"><summary>자세히</summary><div class="d">제주에서 바다색이 가장 예쁘다고 꼽히는 에메랄드빛 해변이에요. 백사장을 걷고, 시간이 되면 옆 서우봉 언덕 정자까지 15분만 올라가도 함덕 바다가 한눈에 보여요. 40분 정도.</div><div class="note" style="margin-top:6px">☁️ 오전 비가 늦게 그쳐 흐리면 바다색이 안 나와요. 그때는 남춘식당에서 바로 보롬왓으로 가고, 원래 시간(보롬왓 15:30 · 체크인 17:40 · 하라케케 18:00)대로 움직여요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 15:40 출발, 약 40분</div></li>
+      <li><div class="t">16:20</div><div><div class="p"><span class="n" style="background:var(--d1)">3</span>보롬왓 크리스마스 팝업<a class="nmap" href="https://map.naver.com/p/search/%EB%B3%B4%EB%A1%AC%EC%99%93" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 표선면 번영로 2350-104</div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span><span class="b warn">운영 09:00–18:00 (관광정보 기준) · 팝업 기간 연장 여부 ⚠️</span><span class="b warn">입장료 성인 6,000원 (이전 기준)</span></div><details class="more"><summary>자세히</summary><div class="d">‘Santa’s Magical Invitation’ 팝업(2026.11.1 오픈). 트리·포토존이 있고, 해 질 녘(~17:30)이 가까워질수록 분위기가 좋아요. 체류 약 70분.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 17:20 출발, 약 50분</div></li>
+      <li><div class="t">18:10</div><div><div class="p">🏠 숙소 체크인<a class="nmap" href="https://map.naver.com/p/search/%EC%84%9C%EA%B7%80%ED%8F%AC%EC%8B%9C%20%EC%86%8D%EA%B3%A8%EB%A1%9C%2029-10" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 속골로 29-10</div><div class="d">짐 풀고 옷 갈아입기</div></div></li>
+      <li class="drive"><div></div><div class="d">🚶 걸어서 1분 (같은 주소)</div></li>
+      <li><div class="t">18:20</div><div><div class="p">🍹 하라케케 (발리 감성 노을 칵테일)<a class="nmap" href="https://map.naver.com/p/search/%ED%95%98%EB%9D%BC%EC%BC%80%EC%BC%80%20%EC%84%9C%EA%B7%80%ED%8F%AC" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 속골로 29-10 · 숙소 바로 앞</div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span><span class="b ok">연중무휴</span><span class="b warn">⚠️ 마감 자료마다 다름 (20시 / 21시) · 마지막 주문 확인</span><span class="b ok">칵테일·맥주 있음</span></div><details class="more"><summary>자세히</summary><div class="d">야자수 수백 그루에 발리에서 들여온 조각상, 발리스윙 그네, 인공 폭포, 수영장까지 있는 발리풍 정원이에요. 범섬 바다를 보면서 해 진 직후의 하늘색에 칵테일이나 맥주 한 잔. 조명 켜진 정원에서 사진 찍기 좋아요. 40분 정도.</div><div class="note" style="margin-top:6px">🚕 여기서 술을 마시면 차는 숙소에 두고 <b>숙성도까지 택시(카카오T)</b>로 가요. 숙성도에서도 술을 마실 테니 어차피 택시가 편해요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚕 19:05 택시 호출, 약 15–20분</div></li>
+      <li><div class="t">19:30</div><div><div class="p"><span class="n" style="background:var(--d1)">4</span>숙성도 중문점<a class="nmap" href="https://map.naver.com/p/search/%EC%88%99%EC%84%B1%EB%8F%84%20%EC%A4%91%EB%AC%B8%EC%A0%90" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 일주서로 1101</div><div class="d">흑뼈등심·뼈목살 + <b>갈치속젓 볶음밥</b>으로 마무리.</div><div><span class="b off">예약 필수 · ✅ 완료</span><span class="b ok">주차 가능</span></div></div></li>
+      <li class="drive"><div></div><div class="d">🚕 택시로 약 15분 (숙소 가는 길)</div></li>
+      <li><div class="t">21:00</div><div><div class="p"><span class="n" style="background:var(--d1)">5</span>이마트 서귀포점<a class="nmap" href="https://map.naver.com/p/search/%EC%9D%B4%EB%A7%88%ED%8A%B8%20%EC%84%9C%EA%B7%80%ED%8F%AC%EC%A0%90" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 일주동로 9209 (법환동) · 숙소에서 차로 5분</div><div class="d">술·물·주전부리. 2일차 아침은 수희식당이라 커피 정도면 충분해요.</div><div><span class="b warn">⚠️ 영업시간·휴무 이마트 앱에서 확인</span></div></div></li>
+      <li><div class="t">21:40</div><div><div class="p">🏠 숙소</div><div class="d">이마트에서 숙소까지는 택시로 5분 거리예요.</div></div></li>
+    </ul>
+    <details class="more cardnote"><summary>☔ 비 플랜 B</summary><div class="note blue" style="margin-top:6px">(오전 비 예보)<br>• 도착이 13:05라 오전 비는 대부분 피할 가능성이 커요. 출발 전 항공편 지연 여부만 확인하세요.<br>• 남춘식당은 실내라 그대로 가요. 주차장에서 걸을 때 우산만 챙기세요.<br>• <b>보롬왓에 갈 때까지 비가 계속 오면</b> 실내 카페·팝업만 짧게 보거나, 바로 숙소로 가서 쉬세요. <b>보롬왓은 3일차로 옮기면 돼요</b> (3일차 탭의 플랜 B).<br>• 비 그친 직후 중산간 도로는 안개가 낄 수 있어요. 천천히 운전하세요.</div></details>
+  </div>
+</section>
+
+<!-- 2일차 -->
+<section class="panel" id="p-d2">
+  <div class="card">
+    <h2 class="daytitle"><span class="dot" style="background:var(--d2)"></span>2일차 · 11/19(목) <small>뷰 맛집 아침 → 투명카약 → 동백·유채 → 큰엉 바다 → 시장 → 야경 → 회 파티</small></h2>
+    <ul class="tl">
+      <li><div class="t">09:40</div><div><div class="p">🏠 숙소 출발</div><div class="d">늦잠 OK.</div></div></li>
+      <li class="drive"><div></div><div class="d">🚗 약 20분</div></li>
+      <li><div class="t">10:00</div><div><div class="p"><span class="n" style="background:var(--d2)">6</span>수희식당 (전복뚝배기 아침)<a class="nmap" href="https://map.naver.com/p/search/%EC%88%98%ED%9D%AC%EC%8B%9D%EB%8B%B9%20%EC%84%9C%EA%B7%80%ED%8F%AC" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 태평로 377 (이중섭거리 근처)</div><div><span class="b ok">08:00–21:00 · 브레이크 15–17시</span><span class="b off">설·추석만 휴무</span><span class="b ok">무료 주차</span><span class="b resv">064-762-0777</span></div><details class="more"><summary>자세히</summary><div class="d">천지연폭포 하류와 서귀포 칠십리가 내려다보이는 뷰가 장점이에요. 아침이니 <b>전복뚝배기 2개</b>(15,000원 / 특 20,000원)를 추천하고, 더 먹고 싶으면 고등어구이(15,000원)를 하나 추가하세요. 갈치조림은 소 5만 원부터라 이 집에선 비싼 편이에요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 10:50 출발, 약 20분</div></li>
+      <li><div class="t">11:10</div><div><div class="p"><span class="n" style="background:var(--d2)">7</span>쇠소깍 투명카약 (날씨 보고 선택)<a class="nmap" href="https://naver.me/x0O2nO93" target="_blank" rel="noopener">지도</a></div><div class="addr">쇠소깍전통나룻배체험지점 · 서귀포시 쇠소깍로 110</div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span><span class="b ok">동절기 09:00–15:00</span><span class="b warn">2인 2만 원 · 약 20분</span><span class="b resv">당일 운영 확인 064-762-1619</span><span class="b ok">2·3주차장 무료</span></div><details class="more"><summary>자세히</summary><div class="d">국내 투명카약 명소 1위로 꼽히는 곳이에요. 바닥이 투명해서 에메랄드빛 물 아래 현무암이 보여요. 물빛은 오전 10–11시가 가장 좋아요. 11월 평일이라 대기가 거의 없을 거예요. <b>흐리거나 바람이 세면</b> 카약은 타지 말고 산책로에서 10분 사진만 찍고 넘어가요. 장갑 챙기기.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 11:50 출발, 약 10분</div></li>
+      <li><div class="t">12:00</div><div><div class="p"><span class="n" style="background:var(--d2)">8</span>휴애리 자연생활공원 (동백·유채·귤)<a class="nmap" href="https://map.naver.com/p/search/%ED%9C%B4%EC%95%A0%EB%A6%AC%20%EC%9E%90%EC%97%B0%EC%83%9D%ED%99%9C%EA%B3%B5%EC%9B%90" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 남원읍 신례동로 256</div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span><span class="b ok">09:00–18:00 · 겨울 입장마감 16:30</span><span class="b warn">성인 13,000원 · 축제 기간 네이버 예약 최대 30% 할인</span><span class="b resv">출발 전 인스타 @jeju_hueree로 축제 시작 확인</span></div><details class="more"><summary>자세히</summary><div class="d">동백올레길·동백정원·<b>동백온실</b>이 있어서 바깥 나무가 덜 피어도 온실에서 동백을 볼 가능성이 높아요. 겨울엔 <b>노란 유채꽃</b>과 온실 수국도 같이 있어서 색감 좋은 사진이 나와요. 원하면 <b>귤따기 체험</b>(1인 8,000원 추가)까지. 1시간 20분 정도 잡아요. 점심이 늦으니 여기서 간식 하나 먹어두세요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 13:20 출발, 약 15분</div></li>
+      <li><div class="t">13:35</div><div><div class="p"><span class="n" style="background:var(--d2)">9</span>남원 큰엉해안 (탁 트인 바다 산책)<a class="nmap" href="https://map.naver.com/p/search/%ED%81%B0%EC%97%89%ED%95%B4%EC%95%88%EA%B2%BD%EC%8A%B9%EC%A7%80" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 남원읍 태위로 522-17 (큰엉전망대)</div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span><span class="b ok">무료 · 입구 무료 공영주차장</span></div><details class="more"><summary>자세히</summary><div class="d">높이 30m 해안 절벽 위로 평평한 산책로가 이어져서, 걷는 내내 탁 트인 파란 바다가 보여요. 나무 터널 사이로 한반도 모양이 보이는 <b>한반도 포토존</b>은 걷던 방향에서 뒤를 돌아봐야 찾을 수 있어요. 왕복 40분 정도.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 14:20 출발, 약 30분</div></li>
+      <li><div class="t">14:50</div><div><div class="p"><span class="n" style="background:var(--d2)">10</span>올레시장 (늦은 점심 · 시장 먹거리)<a class="nmap" href="https://map.naver.com/p/search/%EC%84%9C%EA%B7%80%ED%8F%AC%EB%A7%A4%EC%9D%BC%EC%98%AC%EB%A0%88%EC%8B%9C%EC%9E%A5" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 중앙로62번길 18</div><div><span class="b ok">차는 시장 공영주차장에</span><span class="b warn">가게마다 마감 시간 다름</span></div><details class="more"><summary>자세히</summary><div class="d">아침 이후 첫 끼니라 여기서 시장 먹거리로 늦은 점심을 해요. 흑돼지 꼬치, 귤 간식처럼 여러 가지를 조금씩 나눠 먹어요. 바로 옆 <b>이중섭거리</b>(소품샵·벽화 골목)도 걸어서 같이 보고, 남는 시간엔 골목 카페에서 쉬어요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 17:05 출발, 약 10분 · 천지연 주차장에 세우고 새연교까지 걸어서 10분</div></li>
+      <li><div class="t">17:30</div><div><div class="p"><span class="n" style="background:var(--d2)">11</span>새연교·새섬 (노을 끝물 + 야경)<a class="nmap" href="https://map.naver.com/p/search/%EC%83%88%EC%97%B0%EA%B5%90" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포항 · 천지연 주차장에서 걸어서 약 10분</div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span><span class="b ok">무료 보행 다리</span><span class="b off">금·토 ‘새연쇼’는 10/31 종료</span></div><details class="more"><summary>자세히</summary><div class="d">일몰(~17:25) 직후 도착해서 노을 끝물과 다리 조명을 한 번에 담아요. 돛배 모양 주탑이 켜지면 커플 사진이 제일 잘 나오는 시간이에요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚶 걸어서 약 10분</div></li>
+      <li><div class="t">18:10</div><div><div class="p"><span class="n" style="background:var(--d2)">12</span>천지연폭포 야경<a class="nmap" href="https://map.naver.com/p/search/%EC%B2%9C%EC%A7%80%EC%97%B0%ED%8F%AD%ED%8F%AC" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 남성중로 2-15</div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span><span class="b ok">성인 2,000원 · 무료 주차</span><span class="b warn">입장마감 21:20</span></div><details class="more"><summary>자세히</summary><div class="d">2026년에 조명 185개를 42년 만에 새로 바꿨어요. 완전히 어두워진 뒤에 가야 예뻐요. 체류 약 40분.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 18:50 출발, 약 10분</div></li>
+      <li><div class="t">19:00</div><div><div class="p"><span class="n" style="background:var(--d2)">13</span>하나로마트 서귀포농협점 (회 포장)<a class="nmap" href="https://map.naver.com/p/search/%EC%84%9C%EA%B7%80%ED%8F%AC%EC%8B%9C%20516%EB%A1%9C%2040" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 516로 40 (토평동)</div><div><span class="b warn">⚠️ 마감 시간 확인</span><span class="b resv">064-767-5101</span><span class="b ok">주차장 넓음</span></div><details class="more"><summary>자세히</summary><div class="d">회는 마지막에 사서 바로 숙소로 가요. 차에 오래 둘 필요가 없어요. 저녁엔 회가 빠질 수 있으니 <b>오후에 전화해서 방어회 2팩 남겨달라고</b> 부탁해 두세요. 아이스팩 꼭 받기.</div><div class="note" style="margin-top:6px">🔁 회가 다 팔렸으면 올레시장 안 횟집(포장)에서 사요. 낮에 시장 갈 때 미리 사서 숙소에 넣어두는 것도 방법이에요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 약 20분</div></li>
+      <li><div class="t">19:30</div><div><div class="p">🏠 숙소에서 회 파티</div><div class="d">이마트에서 산 술 + 하나로 회.</div></div></li>
+    </ul>
+    <details class="more cardnote"><summary>💡 힘들면 빼는 순서</summary><div class="note blue" style="margin-top:6px">① 카약(날씨 안 좋으면 바로 패스) → ② 이중섭거리 산책은 짧게.</div></details>
+  </div>
+</section>
+
+<!-- 3일차 -->
+<section class="panel" id="p-d3">
+  <div class="card">
+    <h2 class="daytitle"><span class="dot" style="background:var(--d3)"></span>3일차 · 11/20(금) <small>예쁜 점심 → 귤밭 카페 → 기념품 → 공항</small></h2>
+    <ul class="tl">
+      <li><div class="t">09:30</div><div><div class="p">기상 · 짐 정리</div><div class="d">아침은 거르거나 숙소에서 가볍게. 첫 끼를 제대로 먹어요.</div></div></li>
+      <li><div class="t">11:00</div><div><div class="p">🏠 체크아웃 · 출발</div></div></li>
+      <li class="drive"><div></div><div class="d">🚗 약 20분</div></li>
+      <li><div class="t">11:20</div><div><div class="p"><span class="n" style="background:var(--d3)">14</span>둘레길 (점심 · 제주 재료 양식)<a class="nmap" href="https://map.naver.com/p/search/%EB%91%98%EB%A0%88%EA%B8%B8%20%EC%84%9C%EA%B7%80%ED%8F%AC%EC%A4%91%EB%AC%B8%EB%B3%B8%EC%A0%90" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 천제연로 209-1 (중문)</div><div><span class="b warn">⚠️ 영업시간·휴무 미확인 — 네이버 지도로 확인</span><span class="b ok">웨이팅 적은 편</span><span class="b warn">주차 자리 적다는 후기</span></div><details class="more"><summary>자세히</summary><div class="d">제주 감성과 모던함을 섞은 양식집이에요. 톳을 넣은 흑돼지 오믈렛, 고사리 파스타처럼 제주 재료로 만든 메뉴라 흔하지 않아요. 웨이팅이 거의 없고 음식이 빨리 나와서 마지막 날에 부담이 없어요. <b>추천 조합: 흑돼지 오믈렛 + 고사리 마농 봉골레 + 가츠산도.</b> 시그니처라는 고등어 파스타는 평이 갈려서 빼는 걸 추천해요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 12:30 출발, 약 15분</div></li>
+      <li><div class="t">12:45</div><div><div class="p"><span class="n" style="background:var(--d3)">15</span>카페 귤꽃다락 (귤밭 카페)<a class="nmap" href="https://map.naver.com/p/search/%EC%B9%B4%ED%8E%98%20%EA%B7%A4%EA%BD%83%EB%8B%A4%EB%9D%BD" target="_blank" rel="noopener">지도</a></div><div class="addr">서귀포시 이어도로1027번길 34 (강정)</div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span><span class="b ok">매일 11:00–19:00 · LO 18:20</span></div><details class="more"><summary>자세히</summary><div class="d">밥 먹고 카페. 11월은 귤이 주황색으로 익는 때라 귤밭 산책 사진이 가장 예뻐요. 이번 여행 디저트는 여기서 한 번만.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 13:35 출발, 평화로 약 60분</div></li>
+      <li><div class="t">14:35</div><div><div class="p"><span class="n" style="background:var(--d3)">16</span>🛍 샵제주 공항점 (기념품)<a class="nmap" href="https://map.naver.com/p/search/%EC%83%B5%EC%A0%9C%EC%A3%BC%20%EA%B3%B5%ED%95%AD%EC%A0%90" target="_blank" rel="noopener">지도</a></div><div class="addr">제주시 다호북길 109, 2층 (공항 건물 아님 · 공항 서쪽 도두 가는 길)</div><div><span class="b ok">매일 09:00–20:00</span><span class="b ok">전용 주차장</span></div><details class="more"><summary>자세히</summary><div class="d">이름만 ‘공항점’이고 공항 밖 길가 건물이라 렌터카로 들러요. 전용 주차장이 있어요. 넓은 기념품샵이에요. 감귤 모자, 마그넷, 제주 먹거리를 한 번에 사고 택배도 보낼 수 있어요.</div></details></div></li>
+      <li class="drive"><div></div><div class="d">🚗 약 5분</div></li>
+      <li><div class="t">15:15</div><div><div class="p"><span class="n" style="background:var(--d3)">17</span>도두 무지개해안도로<a class="nmap" href="https://map.naver.com/p/search/%EB%8F%84%EB%91%90%EB%8F%99%20%EB%AC%B4%EC%A7%80%EA%B0%9C%ED%95%B4%EC%95%88%EB%8F%84%EB%A1%9C" target="_blank" rel="noopener">지도</a></div><div><span class="b insta" title="사진 꼭 찍을 곳">📸</span></div><div class="d">알록달록한 방호벽 + 비행기 이착륙. 20분 사진만 찍고 이동.</div></div></li>
+      <li><div class="t">15:40</div><div><div class="p">⛽ 주유·충전</div><div class="d">반납 기준만큼 채우기</div></div></li>
+      <li><div class="t">16:00</div><div><div class="p">🚗 SK렌터카 반납 → 셔틀로 공항<a class="nmap" href="https://map.naver.com/p/search/SK%EB%A0%8C%ED%84%B0%EC%B9%B4%20%EC%A0%9C%EC%A3%BC%EC%A7%80%EC%A0%90" target="_blank" rel="noopener">지도</a></div><div class="move">반납 + 셔틀 약 30–40분</div></div></li>
+      <li><div class="t">16:40</div><div><div class="p"><span class="n" style="background:var(--d3)">18</span>🎁 마음샌드 수령 (공항)<a class="nmap" href="https://map.naver.com/p/search/%ED%8C%8C%EB%A6%AC%EB%B0%94%EA%B2%8C%EB%9C%A8%20%EC%A0%9C%EC%A3%BC%EA%B3%B5%ED%95%AD" target="_blank" rel="noopener">지도</a></div><div class="addr">파리바게뜨 제주공항 렌터카하우스점 (공항 5번 게이트 쪽)</div><div><span class="b off">예약 필수 · 파리바게뜨 앱</span></div><details class="more"><summary>자세히</summary><div class="d">제주 기념품 1위로 꼽히는 땅콩 쿠키예요. 파리바게뜨 앱으로 <b>3일 전(11/17)부터 예약</b>하고 여기서 받아요. 현장 물량은 금방 품절돼요.</div></details></div></li>
+      <li><div class="t">17:30</div><div><div class="p">보안검색 · 탑승구</div></div></li>
+      <li><div class="t">18:25</div><div><div class="p">✈️ 제주 → 광주 출발</div></div></li>
+    </ul>
+    <details class="more cardnote"><summary>☔ 플랜 B — 1일차에 비 때문에 보롬왓을 못 갔다면</summary><div class="note blue" style="margin-top:6px"><br>11:00 체크아웃 → <b>둘레길</b> 11:20 → 🚗 약 50분 → <b>보롬왓</b> 13:20–14:20 → 🚗 약 50분 → <b>샵제주</b> 15:10 → 15:50 렌터카 반납.<br>이 경우 귤꽃다락과 도두는 빠져요.</div></details>
+  </div>
+</section>
+
+<!-- 예약·휴무 -->
+<section class="panel" id="p-chk">
+  <div class="card">
+    <h2>📅 언제까지 예약하나</h2>
+    <table class="rsv">
+      <tr><th style="width:84px">언제까지</th><th>할 일</th><th style="width:88px">어디서</th></tr>
+      <tr class="must"><td><b>11/17(화)</b><span class="mustb">예약 필수</span></td><td><b>마음샌드 예약</b> — 방문 3일 전인 11/17부터 예약이 열려요. 금방 차니까 <b>11/17 당일에</b> 파리바게뜨 앱에서 렌터카하우스점 · 11/20 수령으로</td><td class="lk"><a class="slink" href="https://www.paris.co.kr" target="_blank" rel="noopener">파리바게뜨 ↗</a></td></tr>
+      <tr><td><b>11/17(화)</b></td><td><b>보롬왓</b> 크리스마스 팝업 운영시간 · <b>둘레길</b> 금요일 영업 확인</td><td class="lk"><a class="nmap" href="https://map.naver.com/p/search/%EB%B3%B4%EB%A1%AC%EC%99%93" target="_blank" rel="noopener">보롬왓</a><a class="nmap" href="https://map.naver.com/p/search/%EB%91%98%EB%A0%88%EA%B8%B8%20%EC%84%9C%EA%B7%80%ED%8F%AC%EC%A4%91%EB%AC%B8%EB%B3%B8%EC%A0%90" target="_blank" rel="noopener">둘레길</a></td></tr>
+      <tr><td><b>11/18(수)</b></td><td><b>휴애리 입장 예약</b> — 축제 기간 네이버 예약 할인 · 동백·유채 축제 시작했는지 인스타로 확인</td><td class="lk"><a class="nmap" href="https://map.naver.com/p/search/%ED%9C%B4%EC%95%A0%EB%A6%AC%20%EC%9E%90%EC%97%B0%EC%83%9D%ED%99%9C%EA%B3%B5%EC%9B%90" target="_blank" rel="noopener">예약</a><a class="slink" href="https://www.instagram.com/jeju_hueree/" target="_blank" rel="noopener">인스타 ↗</a><a class="slink" href="http://www.hueree.com" target="_blank" rel="noopener">홈페이지 ↗</a></td></tr>
+      <tr class="must"><td><b>완료 ✅</b><span class="mustb">예약 필수</span></td><td><b>숙성도 중문</b> 11/18 19:30 예약 완료</td><td class="lk"><a class="slink" href="https://app.catchtable.co.kr" target="_blank" rel="noopener">캐치테이블 ↗</a></td></tr>
+      <tr><td><b>당일 현장</b></td><td><b>남춘식당</b>(11/18 13:50) 현장 대기 등록 (가게 입구 기계) · 064-702-2588</td><td class="lk"><a class="nmap" href="https://map.naver.com/p/search/%EB%82%A8%EC%B6%98%EC%8B%9D%EB%8B%B9%20%EC%A0%9C%EC%A3%BC" target="_blank" rel="noopener">지도</a></td></tr>
+      <tr><td><b>당일 아침</b></td><td><b>쇠소깍 카약</b>(11/19) 날씨 보고 결정 · 운영 여부 전화 064-762-1619 (예약 불필요) · 수희식당도 예약 없이 OK</td><td class="lk"><a class="nmap" href="https://naver.me/x0O2nO93" target="_blank" rel="noopener">지도</a></td></tr>
+      <tr><td><b>11/19 오후</b></td><td><b>하나로마트</b>에 전화해서 방어회 남겨달라고 하기 · 064-767-5101 · 19:00 픽업</td><td class="lk"><a class="nmap" href="https://map.naver.com/p/search/%EC%84%9C%EA%B7%80%ED%8F%AC%EC%8B%9C%20516%EB%A1%9C%2040" target="_blank" rel="noopener">지도</a></td></tr>
+</table>
+    <div class="maphint" style="padding:6px 0 0">전화번호는 눌러도 안 걸리는 화면이 있어서 숫자로 적어뒀어요.</div>
+  </div>
+  <div class="card">
+    <h2>🚫 휴무·운영 체크</h2>
+    <table>
+      <tr><th>장소</th><th>휴무/운영</th><th>일정</th></tr>
+      <tr><td>남춘식당</td><td>11:00–16:30, 일요일 휴무</td><td>수 13:50 ✅</td></tr>
+      <tr><td>둘레길</td><td>영업시간·휴무 ⚠️ 미확인</td><td>금 11:20</td></tr><tr><td>샵제주 공항점</td><td>매일 09–20시</td><td>금 ✅</td></tr>
+      <tr><td>쇠소깍 카약</td><td>동절기 09–15시</td><td>목 11:05 ✅</td></tr>
+            <tr><td>수희식당</td><td>08:00–21:00, 설·추석 휴무</td><td>목 ✅</td></tr><tr><td>휴애리</td><td>09–18시, 입장 16:30, 연중무휴</td><td>목 12:00 ✅</td></tr><tr><td>귤꽃다락</td><td>11:00–19:00 매일</td><td>금 ✅</td></tr>
+      <tr><td>하나로마트 서귀포농협</td><td>마감 시간 ⚠️</td><td>목 19:00</td></tr>
+                  <tr><td>용머리해안 (선택)</td><td>물때·기상 통제, 입장 16:30</td><td>목 (당일 확인)</td></tr>
+      <tr><td>천지연폭포</td><td>입장마감 21:20</td><td>목 18:10 ✅</td></tr>
+      <tr><td>보롬왓</td><td>09–18시 (팝업 기간 연장 ⚠️), 12월~3월 동절기 휴장 후기</td><td>수 ✅</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h2>🍖 연돈은 뺐어요</h2>
+    <div class="note" style="margin-top:0">연돈은 원격 줄서기가 안 되고, 아침 9시 전에 매장에서 직접 대기 등록을 해야 해요. 맛있지만 그 고생을 할 정도는 아니라는 평이 많고, 줄 서는 이유인 치즈카츠는 하루 한정이에요. 제주 음식도 아니라서 이번 여행에서는 뺐어요. 당근 ‘예약티켓’은 공식 판매처가 없어서 사지 않는 게 좋아요.</div>
+  </div>
+</section>
+
+<!-- 마트·회 -->
+<section class="panel" id="p-mart">
+  <div class="card">
+    <h2>🐟 회는 하나로마트 서귀포농협점</h2>
+    <ul class="clean">
+      <li><b>왜 마트 회?</b> 제주 도민들은 어설픈 횟집보다 마트 회를 추천하는 경우가 많아요. 하나로마트 회는 보통 1만~2만 원대예요.</li>
+      <li><b>왜 이 지점?</b> 도내에서도 규모가 큰 하나로마트이고, 수산코너에서 활어회를 팔아요. 방어회·도미회·광어회 등이 인기 상품이에요. 하나로마트도 지점마다 회 종류 차이가 커서, 큰 지점으로 골랐어요.</li>
+      <li><b>언제?</b> 생선회는 12시 전후로 나온다는 후기가 있어서 오후 방문이 좋아요. 2일차엔 야경을 다 보고 19:00에 사서 바로 숙소로 가요. 늦은 시간이라 오후에 전화로 남겨달라고 해두세요.</li>
+      <li><b>11월은 방어철</b>이에요. 방어회 + 광어나 도미 한 팩 정도면 둘이 충분해요.</li>
+      <li><b>보관</b>: 마지막에 사서 20분 뒤 숙소 도착이라 걱정 없어요. 아이스팩만 받아요.</li>
+    </ul>
+    <div class="note">⚠️ 마감 시간은 출발 전 네이버 지도로 확인하세요 (064-767-5101).</div>
+  </div>
+  <div class="card">
+    <h2>🛒 술·간식은 이마트 서귀포점 (1일차 밤)</h2>
+    <ul class="clean">
+      <li>숙소에서 차로 5분 (일주동로 9209, 법환동). 숙성도 다녀오는 길에 들러요.</li>
+      <li>2일차 회와 같이 먹을 술은 하나로마트에서 같이 사도 돼요.</li>
+    </ul>
+    <div class="note">⚠️ 이마트 서귀포점의 11월 휴무일과 마감 시간은 이마트 앱의 점포 안내에서 확인하세요.</div>
+  </div>
+  <div class="card">
+    <h2>🛍 올레시장은 2일차 14:00 (늦은 점심)</h2>
+    <p style="margin:0">아침 이후 첫 끼니를 시장 먹거리로 해결해요. 바로 옆 이중섭거리까지 같이 걸어요. 하나로에 회가 없으면 시장 안 횟집이 플랜 B예요.</p>
+  </div>
+</section>
+
+<!-- 바꾼 곳·트렌드 -->
+<section class="panel" id="p-alt">
+  <div class="card">
+    <h2>🔁 바꾸거나 옮긴 것</h2>
+    <ul class="clean">
+      <li><b>1일차 점심 → 남춘식당</b>: 쌀쌀한 날이라 차가운 소바 대신 뜨끈한 고기국수로. 도민들이 줄 서는 김밥·국수집이에요. 북교해바라기는 근처라 플랜 B로 남겨뒀어요.</li>
+      <li><b>2일차 아침 → 수희식당</b>: 천지연 하류 뷰가 있는 서귀포 향토 식당이에요. 아침이라 갈치조림보다 가벼운 전복뚝배기로.</li><li><b>2일차 자연 → 포토스팟</b>: 대한목장·용머리해안·주상절리를 빼고 쇠소깍 카약·동백포레스트·새연교를 넣었어요. 천지연은 야경이라 남겼어요.</li><li><b>허니문하우스 → 뺌</b>: 오션뷰 카페가 겹쳐서 그 시간에 쇠소깍 카약을 넣었어요.</li><li><b>카멜리아힐·원앤온리 → 휴애리</b>: 둘 다 서쪽 안덕이라 왕복 운전이 길었어요. 동백포레스트는 개화가 늦으면 꽃이 거의 없을 수 있어서, 온실 동백·유채·귤이 같이 있는 휴애리(쇠소깍에서 11분)로 정했어요. 감귤박람회·방어축제는 커플 여행엔 애매해서 뺐어요.</li><li><b>하라케케 → 1일차 저녁</b>: 숙소 바로 앞 발리풍 정원 카페라, 숙성도 가기 전 노을 칵테일 자리로 옮겼어요.</li><li><b>숙소 휴식 → 뺌</b>: 대신 운전이 짧은 동쪽 동선이라 덜 힘들어요.</li><li><b>하멜 → 뺌</b>: 픽업카페·마음샌드와 같은 디저트 포장이고, 현장 판매분이 적어서 예약해야 해요. 3일차가 30분 여유로워졌어요.</li><li><b>괸당네 → 수희식당</b>: 비슷한 서귀포 생선집이라 하나만. 뷰가 있고 아침에 가볍게 먹기 좋은 수희식당으로.</li><li><b>회 → 맨 마지막에 사기</b>: 야경 보고 19:00에 사서 바로 숙소로 가요.</li>
+      <li><b>연돈 → 뺌</b>: 아침 대기 등록이 필수인데 그만큼의 가치는 아니라는 평이 많아요.</li>
+      <li><b>“마트 회” → 하나로마트 서귀포농협점</b>: 회 종류가 많은 큰 지점으로 골랐어요. 올레시장은 선택.</li>
+      <li><b>3일차 점심 → 둘레길</b>: 해장국은 흔한 메뉴라 뺐어요. 오전열한시는 야자수·냉국수라 여름 느낌이 강해서, 숙소 근처의 제주 재료 양식집으로 바꿨어요. 카페(귤꽃다락)보다 먼저 가요.</li><li><b>픽업카페 → 뺌</b>: 디저트가 너무 많아서요. 3일차 디저트는 귤꽃다락 한 번 + 기념품 마음샌드만.</li><li><b>기념품 → 샵제주 공항점</b>: 공항 바로 옆이라 반납 전에 들러요.</li>
+      <li><b>제주마방목지 → 귤꽃다락</b>: 11월 중순 방목이 불확실하고 자연 코스가 많아서, 숙소 근처 귤밭 카페로 바꿨어요.</li>
+      <li><b>보롬왓 → 1일차 오후</b>: 서귀포로 넘어가는 길에 들르기 좋고, 해 질 무렵이 예뻐요.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>✨ 2026 트렌드 포토스팟</h2>
+    <ul class="clean">
+      <li><b>보롬왓 크리스마스 팝업</b> (1일차) — 2026년 11월 1일 오픈한 ‘Santa’s Magical Invitation’. 11월에 일찍 크리스마스 분위기를 낼 수 있어요.</li>
+      <li><b>쇠소깍 투명카약</b> (2일차) — 국내 투명카약 명소 1위로 꼽히는 곳이에요. 11월 평일이라 한산할 때 탈 수 있어요.</li>
+      <li><b>휴애리 동백·유채</b> (2일차) — 동백 온실 + 겨울 유채꽃 + 귤밭이 한 곳에 있어서, 동백이 덜 피어도 사진을 건질 수 있어요.</li>
+      <li><b>남원 큰엉해안</b> (2일차) — 30m 해안 절벽 산책로와 탁 트인 바다, 나무 터널 ‘한반도 포토존’.</li>
+      <li><b>함덕해수욕장</b> (1일차, 날씨 맑으면) — 제주에서 바다색이 가장 예쁘다는 에메랄드빛 해변.</li>
+      <li><b>새연교 → 천지연 야경</b> (2일차) — 노을 끝물은 새연교, 완전히 어두워지면 천지연 순서예요. 천지연은 2026년 조명을 새로 바꿨어요.</li>
+      <li><b>하라케케</b> (1일차) — 야자수·발리 조각상·발리스윙이 있는 발리풍 정원. 애월 무인제주 같은 분위기를 숙소 앞에서.</li>
+      <li><b>귤꽃다락</b> (3일차) — 11월에만 볼 수 있는 주황 귤밭 사진.</li>
+      <li><b>도두 무지개해안도로</b> (3일차) — 알록달록한 방호벽 + 공항 비행기.</li>
+    </ul>
+    <div class="note">🙅 <b>뺀 것</b>: 억새 명소(새별오름 등)는 절정이 10월 중순~11월 초라 지나 있을 가능성이 커요. 김녕·닭머르 같은 스냅 명소는 동쪽·제주시 끝이라 동선상 뺐어요. 아르떼뮤지엄은 애월이라 멀어요. 카멜리아힐·원앤온리는 서쪽이라 멀어서 뺐어요.</div>
+  </div>
+</section>
+
+<!-- 확인할 것 -->
+<section class="panel" id="p-q">
+  <div class="card">
+    <h2>⚠️ 확인이 필요한 질문</h2>
+    <ol class="q">
+      <li><b>둘레길</b> 영업시간과 휴무를 찾지 못했어요. 금요일 11시대에 여는지 네이버 지도로 확인해 주세요.</li>
+      
+                  <li><b>하나로마트 서귀포농협점</b> 마감 시간을 확인하지 못했어요. 2일차 <b>19:00</b> 방문이라 꼭 확인해 주세요. 오후에 전화로 회를 남겨달라고 하면 안전해요.</li>
+      <li><b>SK렌터카 차종</b>이 전기차인가요? 제주 SK렌터카는 전기차가 많아서, 반납할 때 충전 기준이 주유와 달라요.</li>
+      <li><b>보롬왓</b> 운영시간이 팝업 기간에 늘어나면 1일차를 더 여유 있게 다시 짤게요.</li>
+    </ol>
+  </div>
+  <div class="card src">
+    <h3 style="margin-top:0">참고한 출처</h3>
+    <ul class="clean">
+      <li><a href="https://www.trvlogue.com/ko/jeju-yeondon-grand-josun-review">연돈 대기번호 후기 (trvlogue)</a></li>
+      <li><a href="https://www.insight.co.kr/news/431108">연돈 온라인 예약제 폐지 (인사이트)</a></li>
+      <li><a href="https://world.nol.com/en/content/pois/23332e8f-a4ff-4f8a-8d32-1cebc76b5398">수희식당 메뉴·가격 (NOL World)</a></li>
+      <li><a href="https://ontrip.kr/en/travel-guides/details/1366991">수희식당 운영시간 (ontrip)</a></li>
+      <li><a href="https://travelmapjourney.com/jeju-soesokkak-transparent-kayak-guide/">쇠소깍 투명카약 2026 (travelmapjourney)</a></li>
+      <li><a href="https://travelmapjourney.com/transparent-kayak-sup-korea-best10/">투명카약 명소 BEST 10 (travelmapjourney)</a></li>
+      <li><a href="https://www.telltrip.com/domestic-travel/hueree-camellia-festival-hallasan-winter-garden/">휴애리 동백축제·요금 (텔트립)</a></li>
+      <li><a href="https://www.lounzy.com/trend/2026/01/07/481">휴애리 겨울 꽃 (라운지)</a></li>
+      <li><a href="https://www.ktriptips.com/kor/food/2860705">남춘식당 (ktriptips)</a></li>
+      <li><a href="https://polle.com/place/2Azct9/%EB%82%A8%EC%B6%98%EC%8B%9D%EB%8B%B9">남춘식당 후기 (폴레)</a></li>
+      <li><a href="https://polle.com/place/19JgGO/%EB%91%98%EB%A0%88%EA%B8%B8">둘레길 후기 (폴레)</a></li>
+      <li><a href="https://mom-mom.net/travel/places/670df7b9820b1c3517d720c3">둘레길 서귀포중문본점 (맘맘)</a></li>
+      <li><a href="https://www.trvlogue.com/ko/shop-jeju-airport-souvenirs">샵제주 공항점 (trvlogue)</a></li>
+      <li><a href="https://www.ktriptips.com/kor/food/2854102">신해바라기 (ktriptips)</a></li>
+      <li><a href="https://mjroad.com/entry/%EC%A0%9C%EC%A3%BC%EB%8F%84%EB%AF%BC-%EB%A7%9B%EC%A7%91-%EB%B6%81%EA%B5%90-%ED%95%B4%EB%B0%94%EB%9D%BC%EA%B8%B0%EB%A5%BC-%EC%95%84%EC%8B%9C%EB%82%98%EC%9A%94">북교해바라기 (여행은 힐링이다)</a></li>
+      <li><a href="https://www.visitjeju.net/kr/detail/view?contentsid=CNTS_200000000012742">하나로마트 서귀포농협점 (비짓제주)</a></li>
+      <li><a href="https://www.clien.net/service/board/park/17700767">제주 하나로마트 회 (클리앙)</a></li>
+      <li><a href="https://www.diningcode.com/profile.php?rid=bSwuA1bEGsLe">연돈 웨이팅 방식 (다이닝코드)</a></li>
+      <li><a href="https://polle.com/place/4V9p0B/%EC%97%B0%EB%8F%88">연돈 후기 (뽈레)</a></li>
+      <li><a href="https://www.ktriptips.com/kor/tourspot/2714659">보롬왓 운영시간·입장료 (ktriptips)</a></li>
+      <li><a href="https://www.telltrip.com/domestic-travel/cheonjiyeon-waterfall-new-night-lighting-debut/">천지연 2026 조명 교체 (텔트립)</a></li>
+      <li><a href="https://www.jeju.com/blog/jeju-seogwipo-summer-night-course">새연교→천지연 야경 순서 (jeju.com)</a></li>
+      <li><a href="https://m.view.nate.com/travel/view/418537/amp/">보롬왓 크리스마스 팝업 2026 (네이트)</a></li>
+      <li><a href="https://travelmapjourney.com/yongmeori-coast-tide-entry-check/">용머리해안 관람시간 (travelmapjourney)</a></li>
+      <li><a href="https://www.jeju.com/blog/jeju-camellia-spots">제주 동백 명소·개화 시기 (jeju.com)</a></li>
+      <li><a href="https://www.jeju.com/blog/jeju-tangerine-festival-guide">2026 제주감귤박람회 (jeju.com)</a></li>
+      <li><a href="https://polle.com/place/3tuA78/%ED%8C%8C%EB%A6%AC%EB%B0%94%EA%B2%8C%EB%9C%A8">마음샌드 예약 후기 (뽈레 · 파리바게뜨 렌터카하우스점)</a></li>
+      <li><a href="https://www.banksalad.com/articles/%EC%A0%9C%EC%A3%BC%EB%8F%84-%EB%A0%8C%ED%8A%B8%EC%B9%B4-%EC%B6%94%EC%B2%9C-%EB%B9%84%EC%9A%A9-%EB%B9%84%EA%B5%90-%EB%82%98%EC%9D%B4-%EC%A0%84%EC%97%B0%EB%A0%B9%EB%A0%8C%ED%8A%B8%EC%B9%B4-%ED%9B%84%EA%B8%B0">SK렌터카 셔틀 안내 (뱅크샐러드)</a></li>
+      <li><a href="https://www.fnnews.com/news/202609021302064533">2026 제주 가을 추천 (파이낸셜뉴스)</a></li>
+      <li><a href="https://www.imaeil.com/page/view/2026022511254774232">제주 커플 스냅 트렌드 (매일신문)</a></li>
+    </ul>
+  </div>
+</section>
+
+<footer>이동시간은 평일 낮 기준 대략치예요. 운영 정보는 2026년 11월 12일에 찾은 자료 기준이고, ⚠️ 표시는 출발 전에 다시 확인해 주세요.</footer>
+</div>
+
+<script>
+(function(){
+  var C={d1:'#E8772E',d2:'#1F7A8C',d3:'#7A5BA8'};
+  var P={
+    airport:[33.5066,126.4929], sk:[33.4985,126.4895],
+    sinhae:[33.5135,126.5225], pickup:[33.4995,126.5300],
+    borom:[33.4230,126.7330], stay:[33.2400,126.5330],
+    suk:[33.2540,126.4370], emart:[33.2445,126.5160],
+    yeondon:[33.2535,126.4115], jusang:[33.2383,126.4259],
+    yong:[33.2320,126.3145], daehan:[33.2960,126.6150],
+    harakeke:[33.2400,126.5330], heesin:[33.2560,126.5420],
+    olle:[33.2500,126.5635], cheon:[33.2470,126.5545],
+    mabang:[33.4290,126.5970], eunhee:[33.5050,126.5400], seongmi:[33.4355,126.6655], bukgyo:[33.5120,126.5230], hanaro:[33.2575,126.5800],
+    hamel:[33.4840,126.4780], dodu:[33.5090,126.4600],
+    gwin:[33.2455,126.5680], honey:[33.2445,126.5840], onlyone:[33.2365,126.3190], saeyeon:[33.2385,126.5590], suhui:[33.2465,126.5605], camellia:[33.2900,126.3700], camforest:[33.2920,126.6180], hueree:[33.3085,126.6330], oedol:[33.2400,126.5450], hamdeok:[33.5435,126.6690], keuneong:[33.2650,126.6620], expo:[33.2840,126.5960], soe:[33.2525,126.6215], dotori:[33.5035,126.5340], am11:[33.2530,126.4170], shopjeju:[33.4990,126.4700], gyul:[33.2440,126.4900]
+  };
+var PIN={
+    d1:[['1','남춘식당','dotori'],['2','함덕','hamdeok'],['3','보롬왓','borom'],['4','숙성도 중문','suk'],['5','이마트','emart']],
+    d2:[['6','수희식당','suhui'],['7','쇠소깍 카약','soe'],['8','휴애리','hueree'],['9','큰엉해안','keuneong'],['10','올레시장','olle'],['11','새연교','saeyeon'],['12','천지연','cheon'],['13','하나로마트','hanaro']],
+    d3:[['14','둘레길','am11'],['15','귤꽃다락','gyul'],['16','샵제주','shopjeju'],['17','도두','dodu'],['18','마음샌드(공항)','airport']]
+  };
+var ROUTE={
+    d1:['airport','sk','dotori','hamdeok','borom','stay','suk','emart','stay'],
+    d2:['stay','suhui','soe','hueree','keuneong','olle','saeyeon','cheon','hanaro','stay'],
+    d3:['stay','am11','gyul','shopjeju','dodu','sk','airport']
+  };
+var OUT=[[33.30,126.16],[33.36,126.19],[33.41,126.25],[33.45,126.31],[33.48,126.38],[33.505,126.45],[33.52,126.52],[33.535,126.60],[33.55,126.68],[33.56,126.75],[33.535,126.83],[33.51,126.89],[33.47,126.935],[33.44,126.95],[33.40,126.91],[33.33,126.86],[33.29,126.77],[33.27,126.69],[33.245,126.61],[33.235,126.53],[33.235,126.45],[33.225,126.37],[33.21,126.31],[33.205,126.26],[33.23,126.20]];
+  var INFO={
+    dotori:['1일차 13:50','남춘식당 제주'], hamdeok:['1일차 15:00 (날씨 맑으면)','함덕해수욕장'], borom:['1일차 16:20','보롬왓'], stay:['1일차 18:20 하라케케 · 숙소','하라케케 서귀포'],
+    suk:['1일차 19:30','숙성도 중문점'], emart:['1일차 21:00','이마트 서귀포점'],
+    suhui:['2일차 10:00','수희식당 서귀포'], soe:['2일차 11:10','https://naver.me/x0O2nO93'], hueree:['2일차 12:00','휴애리 자연생활공원'],
+    keuneong:['2일차 13:35','큰엉해안경승지'], olle:['2일차 14:50','서귀포매일올레시장'], saeyeon:['2일차 17:30','새연교'],
+    cheon:['2일차 18:10','천지연폭포'], hanaro:['2일차 19:00','서귀포시 516로 40'],
+    am11:['3일차 11:20','둘레길 서귀포중문본점'], gyul:['3일차 12:45','카페 귤꽃다락'], shopjeju:['3일차 14:35','샵제주 공항점'],
+    dodu:['3일차 15:15','도두동 무지개해안도로'], airport:['3일차 16:40 마음샌드 · 18:25 출발','파리바게뜨 제주공항'],
+    sk:['렌터카 인수·반납','SK렌터카 제주지점']
+  };
+  var TOWN=[['제주시',33.522,126.53],['서귀포',33.262,126.567],['중문',33.247,126.415],['애월',33.465,126.33],['성산',33.455,126.93],['표선',33.33,126.83],['한림',33.41,126.27],['남원',33.275,126.70],['안덕',33.25,126.32]];
+  var LAT0=33.60, LNG0=126.10, K=1000, CL=0.835;
+  function xy(ll){return [(ll[1]-LNG0)*K*CL,(LAT0-ll[0])*K];}
+  var NS='http://www.w3.org/2000/svg';
+  var svg=document.getElementById('map'), box=document.getElementById('mapbox'), pop=document.getElementById('mpop');
+  var gBase, gDyn, vb={x:0,y:0,w:735,h:420}, curDays=['d1','d2','d3'];
+  function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e;}
+  function smooth(pts){ // closed Catmull-Rom path
+    var d='',n=pts.length;
+    for(var i=0;i<n;i++){
+      var p0=pts[(i-1+n)%n],p1=pts[i],p2=pts[(i+1)%n],p3=pts[(i+2)%n];
+      if(i===0)d+='M'+p1[0]+','+p1[1];
+      var c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6],c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+      d+='C'+c1[0].toFixed(1)+','+c1[1].toFixed(1)+' '+c2[0].toFixed(1)+','+c2[1].toFixed(1)+' '+p2[0].toFixed(1)+','+p2[1].toFixed(1);
+    }
+    return d+'Z';
+  }
+  function base(){
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    gBase=el('g',{});
+    el('path',{d:smooth(OUT.map(xy)),fill:'#F3ECE0',stroke:'#C9B99F','stroke-width':1.2,'vector-effect':'non-scaling-stroke'},gBase);
+    gDyn=el('g',{});
+  }
+  function scale(){return box.clientWidth/vb.w;}
+  function setVB(){svg.setAttribute('viewBox',vb.x+' '+vb.y+' '+vb.w+' '+vb.h);render();}
+  function aspect(){return (box.clientHeight||300)/(box.clientWidth||360);}
+  function fit(keys){
+    var xs=[],ys=[];keys.forEach(function(k){var p=xy(P[k]);xs.push(p[0]);ys.push(p[1]);});
+    var x0=Math.min.apply(0,xs),x1=Math.max.apply(0,xs),y0=Math.min.apply(0,ys),y1=Math.max.apply(0,ys);
+    var w=Math.max(x1-x0,60),h=Math.max(y1-y0,40),cx=(x0+x1)/2,cy=(y0+y1)/2,a=aspect();
+    w*=1.5;h*=1.5; if(h/w<a)h=w*a;else w=h/a;
+    var bw=box.clientWidth||360; w=w*bw/(bw-48); h=w*a; cx+=w*(48/bw)/2;
+    vb={x:cx-w/2,y:cy-h/2,w:w,h:h};setVB();
+  }
+  function render(){
+    while(gDyn.firstChild)gDyn.removeChild(gDyn.firstChild);
+    var s=scale(),px=function(v){return v/s;};
+    // towns + Halla
+    var h=xy([33.362,126.533]);
+    el('path',{d:'M'+(h[0]-px(10))+','+(h[1]+px(7))+'L'+h[0]+','+(h[1]-px(8))+'L'+(h[0]+px(10))+','+(h[1]+px(7))+'Z',fill:'#B9C9A3',stroke:'#98AB7F','stroke-width':1,'vector-effect':'non-scaling-stroke'},gDyn);
+    var t=el('text',{x:h[0],y:h[1]+px(19),'text-anchor':'middle','font-size':px(10),fill:'#7A7068'},gDyn);t.textContent='한라산';
+    TOWN.forEach(function(tn){var p=xy([tn[1],tn[2]]);var e=el('text',{x:p[0],y:p[1],'text-anchor':'middle','font-size':px(10.5),fill:'#9A8F84','font-weight':500},gDyn);e.textContent=tn[0];});
+    // routes
+    curDays.forEach(function(d){
+      el('polyline',{points:ROUTE[d].map(function(k){return xy(P[k]).join(',');}).join(' '),fill:'none',stroke:C[d],'stroke-width':curDays.length>1?1.8:2.6,'stroke-dasharray':'5 4','stroke-linecap':'round','stroke-linejoin':'round',opacity:.85,'vector-effect':'non-scaling-stroke'},gDyn);
+    });
+    // fixed markers: airport, stay
+    var a=xy(P.airport);var ta=el('text',{x:a[0]-px(14),y:a[1]-px(6),'text-anchor':'middle','font-size':px(15)},gDyn);ta.textContent='✈️';
+    var st=xy(P.stay);var hs=el('text',{x:st[0],y:st[1]+px(18),'text-anchor':'middle','font-size':px(14),style:'cursor:pointer'},gDyn);hs.textContent='🏠';
+    hs.addEventListener('click',function(e){e.stopPropagation();openPop('stay','🏠 숙소 · 하라케케','#24211E');});
+    // pins + labels with collision hiding
+    var placed=[], r=px(10);
+    curDays.forEach(function(d){PIN[d].forEach(function(p){var c=xy(P[p[2]]);var sx=(c[0]-vb.x)*s,sy=(c[1]-vb.y)*s;placed.push([sx-11,sy-11,sx+11,sy+11,p[2]]);});});
+    var bwid=box.clientWidth; placed.push([bwid-50,0,bwid,128,'ctl']);
+    curDays.forEach(function(d){
+      PIN[d].forEach(function(p){
+        var c=xy(P[p[2]]);
+        var g=el('g',{style:'cursor:pointer'},gDyn);
+        el('circle',{cx:c[0],cy:c[1],r:r,fill:C[d],stroke:'#fff','stroke-width':px(2)},g);
+        var tx=el('text',{x:c[0],y:c[1]+px(4),'text-anchor':'middle','font-size':px(10.5),'font-weight':800,fill:'#fff'},g);tx.textContent=p[0];
+        g.addEventListener('click',function(e){e.stopPropagation();openPop(p[2],p[0]+'. '+p[1],C[d]);});
+        // label box in screen px
+        var sx=(c[0]-vb.x)*s, sy=(c[1]-vb.y)*s, wpx=p[1].length*12+8, box1=[sx+13,sy-9,sx+13+wpx,sy+9];
+        var hit=box1[2]>bwid-4||placed.some(function(b){return b[4]!==p[2]&&!(box1[2]<b[0]||box1[0]>b[2]||box1[3]<b[1]||box1[1]>b[3]);});
+        if(!hit){
+          placed.push(box1);
+          var bg=el('rect',{x:c[0]+px(13),y:c[1]-px(9),width:px(wpx),height:px(18),rx:px(5),fill:'rgba(255,255,255,.92)',stroke:C[d],'stroke-width':1,'vector-effect':'non-scaling-stroke'},g);
+          var lb=el('text',{x:c[0]+px(17),y:c[1]+px(4),'font-size':px(11.5),'font-weight':700,fill:'#24211E'},g);lb.textContent=p[1];
+        }
+      });
+    });
+  }
+  function openPop(key,title,color){
+    var inf=INFO[key]||['',''];
+    pop.innerHTML='<div class="mp-h"><span class="mp-dot" style="background:'+color+'"></span><b>'+title+'</b><button class="mp-x" aria-label="닫기">×</button></div>'+
+      (inf[0]?'<div class="mp-t">'+inf[0]+'</div>':'')+
+      '<a class="mp-btn" href="'+(/^https?:/.test(inf[1])?inf[1]:'https://map.naver.com/p/search/'+encodeURIComponent(inf[1]||title))+'" target="_blank" rel="noopener">N 네이버 지도에서 보기 ↗</a>';
+    pop.style.display='block';
+    pop.querySelector('.mp-x').addEventListener('click',function(e){e.stopPropagation();pop.style.display='none';});
+  }
+  // interaction: drag / wheel / pinch / buttons
+  var ptrs={}, last=null, pinch0=null, moved=false;
+  function toWorld(cx,cy){var r=svg.getBoundingClientRect();return [vb.x+(cx-r.left)/r.width*vb.w, vb.y+(cy-r.top)/r.height*vb.h];}
+  function zoomAt(f,cx,cy){
+    var nw=Math.min(Math.max(vb.w*f,25),1400); f=nw/vb.w;
+    var w=toWorld(cx,cy); vb={x:w[0]-(w[0]-vb.x)*f,y:w[1]-(w[1]-vb.y)*f,w:vb.w*f,h:vb.h*f}; setVB();
+  }
+  var start=null;
+  svg.addEventListener('pointerdown',function(e){ptrs[e.pointerId]=[e.clientX,e.clientY];start=[e.clientX,e.clientY];moved=false;
+    var ids=Object.keys(ptrs); if(ids.length===2){var a=ptrs[ids[0]],b=ptrs[ids[1]];pinch0={d:Math.hypot(a[0]-b[0],a[1]-b[1]),vb:Object.assign({},vb)};}});
+  svg.addEventListener('pointermove',function(e){
+    if(!ptrs[e.pointerId])return; var prev=ptrs[e.pointerId]; ptrs[e.pointerId]=[e.clientX,e.clientY];
+    var ids=Object.keys(ptrs);
+    if(ids.length===2&&pinch0){var a=ptrs[ids[0]],b=ptrs[ids[1]],d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+      var f=pinch0.d/d, cx=(a[0]+b[0])/2, cy=(a[1]+b[1])/2; var keep=vb; vb=pinch0.vb; var w=toWorld(cx,cy); vb=keep;
+      var nw=Math.min(Math.max(pinch0.vb.w*f,25),1400); f=nw/pinch0.vb.w;
+      var r=svg.getBoundingClientRect();
+      vb={w:pinch0.vb.w*f,h:pinch0.vb.h*f,x:0,y:0}; vb.x=w[0]-(cx-r.left)/r.width*vb.w; vb.y=w[1]-(cy-r.top)/r.height*vb.h; setVB(); moved=true; return;}
+    var r2=svg.getBoundingClientRect(), dx=(e.clientX-prev[0])/r2.width*vb.w, dy=(e.clientY-prev[1])/r2.height*vb.h;
+    if(moved||Math.abs(e.clientX-start[0])+Math.abs(e.clientY-start[1])>5){if(!moved){try{svg.setPointerCapture(e.pointerId);}catch(_){}}vb.x-=dx;vb.y-=dy;moved=true;svg.setAttribute('viewBox',vb.x+' '+vb.y+' '+vb.w+' '+vb.h);}
+  });
+  function up(e){delete ptrs[e.pointerId]; if(Object.keys(ptrs).length<2)pinch0=null; if(moved)render();}
+  svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  svg.addEventListener('wheel',function(e){e.preventDefault();zoomAt(e.deltaY>0?1.2:1/1.2,e.clientX,e.clientY);},{passive:false});
+  svg.addEventListener('dblclick',function(e){zoomAt(1/1.8,e.clientX,e.clientY);});
+  svg.addEventListener('click',function(){if(!moved)pop.style.display='none';});
+  function center(f){var r=svg.getBoundingClientRect();zoomAt(f,r.left+r.width/2,r.top+r.height/2);}
+  document.getElementById('zin').addEventListener('click',function(){center(1/1.6);});
+  document.getElementById('zout').addEventListener('click',function(){center(1.6);});
+  document.getElementById('zfit').addEventListener('click',function(){fitDays();});
+  function keysOf(days){var ks=[];days.forEach(function(d){ROUTE[d].forEach(function(k){if(ks.indexOf(k)<0)ks.push(k);});});return ks;}
+  function fitDays(){fit(keysOf(curDays));}
+  function draw(day){
+    curDays=(day==='all'||!PIN[day])?['d1','d2','d3']:[day];
+    pop.style.display='none'; base(); fitDays();
+    var lg=document.getElementById('legend');lg.innerHTML='';
+    curDays.forEach(function(d){PIN[d].forEach(function(p){
+      var s=document.createElement('span');s.innerHTML='<b style="background:'+C[d]+'">'+p[0]+'</b>'+p[1];
+      s.style.cursor='pointer';
+      s.addEventListener('click',function(){var c=xy(P[p[2]]);var w=120,a=aspect();vb={x:c[0]-w/2,y:c[1]-w*a/2,w:w,h:w*a};setVB();openPop(p[2],p[0]+'. '+p[1],C[d]);});
+      lg.appendChild(s);});});
+  }
+  window.addEventListener('resize',function(){fitDays();});
+  var tabs=document.querySelectorAll('.tab');
+  function show(id){
+    tabs.forEach(function(b){b.setAttribute('aria-selected',b.dataset.p===id?'true':'false');});
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id==='p-'+id);});
+    draw(id);
+  }
+  tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.p);});});
+  show('all');
+})();
+</script>
+</body>
+</html>
